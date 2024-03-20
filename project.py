@@ -15,10 +15,10 @@ for i in range(2):
     ps.append(getDevice(psNames[i]))
     ps[i].enable(TIME_STEP)
 
-front_left_motor = robot.getdevice("front left wheel motor")
-front_right_motor = robot.getdevice("front right wheel motor")
-rear_left_motor = robot.getdevice("rear left wheel motor")
-rear_right_motor = robot.getdevice("rear right wheel motor")
+front_left_motor = robot.getDevice("LFmotor")
+front_right_motor = robot.getDevice("RFmotor")
+rear_left_motor = robot.getDevice("LBmotor")
+rear_right_motor = robot.getDevice("RBmotor")
 
 front_right_motor.setPosition(float('inf'))
 front_left_motor.setPosition(float('inf'))
