@@ -1,11 +1,11 @@
 from controller import Robot, DistanceSensor, Motor
 
-# Simulation step time
-TIME_STEP = 65
+# #Simulation step time
+TIME_STEP = 64
 
 MAX_SPEED = 6.28
 
-# Robot instance
+# #Robot instance
 robot = Robot()
 
 ps = []
@@ -30,34 +30,79 @@ front_left_motor.setVelocity(0.0)
 rear_left_motor.setVelocity(0.0)
 rear_right_motor.setVelocity(0.0)
 
-# feedback loop: step simulation until receiving an exit event
+def turn_right():
+    rightSpeed = -0.8 * MAX_SPEED
+    leftSpeed = 0.8 * MAX_SPEED
+    return leftSpeed, rightSpeed
+        
+def turn_left():
+     leftSpeed = -0.8 * MAX_SPEED
+     rightSpeed = 0.8 * MAX_SPEED
+     return leftSpeed, rightSpeed
+        
+def back_off():
+    leftSpeed = -0.8 * MAX_SPEED
+    rightSpeed = -0.8 * MAX_SPEED
+    return leftSpeed, rightSpeed
+
+    #############################################
+
 while robot.step(TIME_STEP) != -1:
-    # read sensors outputs
+
+    # #read sensors outputs
     psValues = []
     for i in range(2):
         psValues.append(ps[i].getValue())
 
-    # detect obstacles
+    # #detect obstacles
     right_obstacle = psValues[0] < 1000
     left_obstacle = psValues[1] < 1000
 
-    # initialize motor speeds at 50% of MAX_SPEED.
-    leftSpeed = 0.5 * MAX_SPEED
-    rightSpeed = 0.5 * MAX_SPEED
+    # #initialize motor speeds at 50% of MAX_SPEED.
+    left_speed = 0.5 * MAX_SPEED
+    right_speed = 0.5 * MAX_SPEED
 
-    # modify speeds according to obstacles
-    if left_obstacle:
-        #turn right
-        leftSpeed = 0.5 * MAX_SPEED
-        rightSpeed = 0
+    if left_obstacle and right_obstacle:
+        left_speed, right_speed = back_off()
+        left_speed, right_speed = turn_right()
+    elif left_obstacle:
+        left_speed, right_speed = turn_right()
     elif right_obstacle:
-        #turn left
-        leftSpeed = 0
-        rightSpeed = 0.5 * MAX_SPEED
+        left_speed, right_speed = turn_left()
 
-    # write actuators inputs
 
-    front_right_motor.setVelocity(rightSpeed)
-    front_left_motor.setVelocity(leftSpeed)
-    rear_left_motor.setVelocity(leftSpeed)
-    rear_right_motor.setVelocity(rightSpeed)
+    # #write actuators inputs
+
+    front_right_motor.setVelocity(right_speed)
+    front_left_motor.setVelocity(left_speed)
+    rear_left_motor.setVelocity(left_speed)
+    rear_right_motor.setVelocity(right_speed)
+    
+    #############################################
+    
+# back_and_forth = 0
+# while robot.step(TIME_STEP) != -1:
+
+    # psValues = []
+    # for i in range(2):
+        # psValues.append(ps[i].getValue())
+
+    # right_obstacle = psValues[0] < 1000
+    # left_obstacle = psValues[1] < 1000
+
+    # left_speed = 0.5 * MAX_SPEED
+    # right_speed = 0.5 * MAX_SPEED
+
+    # if back_and_forth > 0:
+        # back_and_forth -= 1
+        # left_speed, right_speed = turn_right()
+
+    # else:  # read sensors
+        # for i in range(2):
+            # if left_obstacle or right_obstacle:
+                # back_and_forth = 50
+
+    # front_right_motor.setVelocity(right_speed)
+    # front_left_motor.setVelocity(left_speed)
+    # rear_left_motor.setVelocity(left_speed)
+    # rear_right_motor.setVelocity(right_speed)
